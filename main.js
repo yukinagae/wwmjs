@@ -48,6 +48,7 @@ window.onload = function() {
     game.rootScene.addChild(judge);
 
     var bgm = game.assets['FunkTrack.mp3'];
+    bgm.play();
     bgm.volume -= 0.7;
     var beat = game.assets['KickDrum.wav'];
     game.rootScene.addEventListener('enterframe', function() {
