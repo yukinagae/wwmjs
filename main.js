@@ -52,7 +52,7 @@ window.onload = function() {
     bgm.volume -= 0.7;
     var beat = game.assets['KickDrum.wav'];
     game.rootScene.addEventListener('enterframe', function() {
-      bgm.play();
+      // bgm.play();
       var now = bgm.currentTime;
 
       if(now > timing[index]) {
