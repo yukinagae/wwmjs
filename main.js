@@ -1,12 +1,14 @@
 enchant();
 
 window.onload = function() {
-  var game = new Core(320, 320);
+  var game = new Core(350, 350);
   game.fps = 30;
-  game.preload('bigmonster1.gif', 'KickDrum.wav', 'bgm07.wav');
+  game.preload('bigmonster1.gif', 'KickDrum.wav', 'FunkTrack.mp3', 'apad.png', 'icon0.png');
   var timing = [];
-  var note = 60 / 115.09 * 1;
-  for(var i = 0; i < 100; i++) {
+  var counter = 10;
+  var note = 60 / 110.01 * 1;
+  console.log(note);
+  for(var i = 0; i < 1000; i++) {
     timing.push(i * note);
   }
   console.log(timing);
@@ -20,16 +22,32 @@ window.onload = function() {
     m.frame = [4];
     m.scale(2, 2);
     game.rootScene.addChild(m);
-    m.tl.setTimeBased();
+    // m.tl.setTimeBased();
+
+    var pad = new Sprite(100, 100);
+    pad.image = game.assets['apad.png'];
+    pad.x = 100;
+    pad.y = 250;
+    game.rootScene.addChild(pad);
+
+    var energy = new Sprite(16, 16);
+    energy.image = game.assets['icon0.png'];
+    energy.x = 30;
+    energy.y = 250 - 30;
+    energy.frame = [10];
+    energy.scale(2, 2);
+    game.rootScene.addChild(energy);
+    var es = [];
+    es.push(energy);
 
     var judge = new Label()
-    judge.font = "36px Arial"
-    judge.x = 100
-    judge.y = 250
-    judge.text = 'START';
-    game.rootScene.addChild(judge)
+    judge.font = "36px Arial";
+    judge.x = 100;
+    judge.y = 220;
+    judge.text = '';
+    game.rootScene.addChild(judge);
 
-    var bgm = game.assets['bgm07.wav'];
+    var bgm = game.assets['FunkTrack.mp3'];
     bgm.volume -= 0.7;
     var beat = game.assets['KickDrum.wav'];
     game.rootScene.addEventListener('enterframe', function() {
@@ -40,29 +58,55 @@ window.onload = function() {
         index++;
 
         if(index % 2 === 0) {
-          m.x -= 10;
-          m.y += 10;
+          m.frame = [7];
         } else {
-          m.x += 10;
-          m.y -= 10;
+          m.frame = [4];
         }
       }
+
+      var rest = Math.floor(counter / 10 - es.length);
+      // console.log(rest);
+      if(rest === 1) {
+      // for(var i = 1; i < rest; i++) {
+        var e = new Sprite(16, 16);
+        e.image = game.assets['icon0.png'];
+        e.x = 30;
+        e.y = 250 - (30 * (es.length + 1));
+        e.frame = [10];
+        e.scale(2, 2);
+        game.rootScene.addChild(e);
+        es.push(e);
+      // }
+      }
+
     });
     game.rootScene.addEventListener('touchstart', function(e) {
       beat.play();
+
+      pad.tl.scaleTo(2, 2).scaleBy(0.5, 2);
+      for(var i = 0; i < es.length; i++) {
+        es[i].tl.scaleTo(4, 2).scaleBy(0.5, 2);
+      }
+
+      console.log(counter);
 
       var now = bgm.currentTime;
       var time = timing[index];
       console.log(now);
       console.log(time);
-      var diff = now - time;
+      var diff = now - time + 0.4; // TODO this diff is not correct.
       console.log('##' + diff);
       if(diff < 0.1 && diff > -0.1) {
         judge.text = 'COOL';
-      } else if(diff < 1 && diff > -1) {
+        judge.tl.fadeIn(1).fadeOut(24);
+        counter += 2;
+      } else if(diff < 0.2 && diff > -0.2) {
           judge.text = 'GOOD';
+        judge.tl.fadeIn(1).fadeOut(24);
+        counter += 1;
       } else {
         judge.text = 'BAD';
+        judge.tl.fadeIn(1).fadeOut(24);
       }
     });
   }
